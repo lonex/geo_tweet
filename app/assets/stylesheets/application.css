@@ -1,0 +1,251 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or vendor/assets/stylesheets of plugins, if any, can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the top of the
+ * compiled file, but it's generally better to create a new file per style scope.
+ *
+ *= require_self
+ *= require_tree .
+ */
+
+/* Defaults */
+
+body { background-color: #fff; color: #333; }
+
+body, p, ol, ul, td {
+  font-family: verdana, arial, helvetica, sans-serif;
+  font-size:   13px;
+  line-height: 18px;
+}
+
+pre {
+  background-color: #eee;
+  padding: 10px;
+  font-size: 11px;
+}
+
+a { color: #000; }
+a:visited { color: #666; }
+a:hover { color: #fff; background-color:#000; }
+
+h1, h2, h3, h4 {
+  font-weight: bold;
+  margin: 20px 0px;
+  text-align: center;
+}
+
+#notice {
+  color: green;
+}
+
+#error_explanation {
+  width: 450px;
+  border: 2px solid red;
+  padding: 7px;
+  padding-bottom: 0;
+  margin: 0px auto 20px;
+  background-color: #f0f0f0;
+}
+
+#error_explanation h2 {
+  text-align: left;
+  font-weight: bold;
+  padding: 5px 5px 5px 15px;
+  font-size: 12px;
+  margin: -7px;
+  margin-bottom: 0px;
+  background-color: #c00;
+  color: #fff;
+}
+
+#error_explanation ul li {
+  font-size: 12px;
+  list-style: square;
+}
+
+#page {
+  margin: 0 auto;
+  width: 964px;
+}
+
+#header {
+  margin: 0 auto;
+  display: block;
+}
+
+.menu {
+  width: 100%;
+  background-color: #333; 
+}
+
+.menu ul {
+  margin: 0; padding: 0;
+  float: left;
+}
+
+.menu ul li {
+  display: inline;
+}
+
+.menu ul li a { 
+  float: left; text-decoration: none;
+  color: white;
+  padding: 10.5px 11px;
+  background-color: #333; 
+}
+
+.menu ul li a:visited {
+  color: white;
+}
+
+.menu ul li a:hover, .menu ul li .current {
+  color: #fff;
+  background-color:#0b75b2;
+}
+
+#content {
+	clear:both;
+  min-height: 400px;
+}
+
+.clear {
+	clear:both;
+}
+
+.field {
+  border: 1px solid #eee;
+  border-radius: 10px;
+  background-color: #fdfdfd;
+  padding: 8px;
+  margin: 10px 5px;
+  line-height: 18px;
+  height: 25px;
+}
+
+.field label {
+  display: block;
+  float: left;
+  border: 1px solid #69f;
+  border-radius: 10px;
+  background-color: #246;
+  color: white;
+  font-family: arial;
+  padding: 3px;
+  padding-left: 6px;
+  margin-right: 20px;
+  width: 220px;
+  line-height: 18px;
+}
+
+.field .field_with_errors label {
+  background-color: #024;
+  font-weight: bold;
+}
+
+.field .field_with_errors input[type="text"],
+.field .field_with_errors input[type="password"] 
+{
+  background-color: yellow;
+  color: black;
+}
+
+.field label.radio_label {
+  display: inline;
+  float: none;
+  background-color: white;
+  color: black;
+  border: none;
+}
+
+.field input[type="checkbox"],
+.field input[type="radio"]
+{
+  margin: 3px 0.5ex;
+  vertical-align: middle;
+}
+
+.field input[type="text"],
+.field input[type="password"]
+{
+  border: 1px solid #888;
+  padding: 3px;
+}
+
+p.entry {
+  height: 25px;
+}
+
+p.center {
+  margin:auto 0;
+  width:200px;
+  border:0;
+  top:0;
+  clear:both;
+}
+div.subentry {
+   margin-left:100px;
+   margin-bottom:10px;
+   width:500px;
+   height: 15px;
+   clear: both;
+}
+div.subentry label {
+	width:260px;
+	display:block;
+	float:left;
+	padding-left:4px;
+}
+div.subentry input {
+	float:left;
+}
+
+fieldset p.note {
+  margin-left: 270px;
+}
+
+
+#footer  {
+  margin: 0 auto;
+  padding-top: 33px;
+  text-align: center;
+  height: 51px;
+}
+
+div.tweets {
+	margin: auto;
+	width: 500px;
+	text-align: center;
+}
+div.tweet {
+  height: 100px;
+  text-align: left;
+}
+
+div.tweet .image {
+  float: left;
+  margin: 0 1;
+  width: 50;
+  height: 50;
+}
+
+div.tweet .header {
+	
+}
+
+div.tweet span.handle {
+	
+}
+div.tweet span.time {
+	
+}
+div.tweet span.coordinates {
+  float: right;
+}
+div.tweet .tweet_text {
+  margin: 0 0;
+  padding: 0 0;
+}

@@ -1,0 +1,20 @@
+%html
+  %head
+    %title
+      Geo Tweet
+    = stylesheet_link_tag :application
+    = csrf_meta_tag
+    = javascript_include_tag :application
+
+  %body
+    #page
+      #header
+        .menu
+          %ul
+            %li
+              = link_to 'Search Tweets nearby', search_geo_locations_path
+
+      #content
+        = yield
+      #footer
+        &copy;2013 Lonex

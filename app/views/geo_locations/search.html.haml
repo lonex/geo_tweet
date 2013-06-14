@@ -1,0 +1,22 @@
+
+%h2 Please input geo coordinates and find tweets happening nearby
+
+= form_for @geo_location do |f|
+  -if @geo_location.errors.any?
+    #error_explanation
+      %h2= "#{pluralize(@geo_location.errors.count, "error")} prohibits search:"
+      %ul
+        - @geo_location.errors.full_messages.each do |msg|
+          %li= msg
+
+  = fields_for @geo_location do |a|
+    .field
+      = a.label :longitude
+      = a.text_field :longitude
+      %span E.g. 32.1
+    .field
+      = a.label :latitude
+      = a.text_field :latitude
+      %span E.g. -12.33
+  = f.submit 'Search'
+ 

@@ -1,0 +1,8 @@
+%h2 Tweets Near You
+
+.tweets
+  - if @tweets.empty?
+    %p Sorry, there seems to be no tweets nearby
+  - else
+    - @tweets.each do |tweet|
+      = render :partial => "tweet", :locals => {:tweet => tweet}

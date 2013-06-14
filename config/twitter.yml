@@ -1,0 +1,14 @@
+default: &default
+  app_id: "YOUR TWITTER APP ID"
+  app_secret: "YOUR TWITTER APP SECRET"
+  access_token: "YOUR TOKEN"
+  token_secret: "YOUR TOKEN SECRET"
+      
+development:
+  <<: *default
+  
+test:
+  <<: *default
+ 
+production:
+  <<: *default

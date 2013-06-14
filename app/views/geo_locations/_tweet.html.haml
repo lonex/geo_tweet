@@ -1,0 +1,10 @@
+.tweet
+  .image
+    = image_tag tweet.profile_image_url
+  .header
+    %span.handle
+      = link_to "#{tweet.user}", tweet.permalink, target: '_blank'
+    %span.time
+      = link_to "#{tweet.created_at}", tweet.tweet_permalink, target: '_blank'
+    %span.coordinates= tweet.coordinates
+  %p.tweet_text= tweet.text
