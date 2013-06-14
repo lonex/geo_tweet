@@ -41,6 +41,7 @@ If you want to uninstall database
 
 ## Features and limitations
 
+* The app uses _tweetstream_ gem, which is an EM implementation. The app is _only_ tested with Ruby 1.9.3, MongoDB 2.4.4. 
 * The tweets search uses kilometer as distance unit. It searches a radius of 1km, 2km, 5km, 10km, in that order, if 
 necessary. Any tweets geo-tagged beyond 10km is not included. The results is ordered reverse chronologically. The search
 radius is configurable, modify the _'config/search_criteria.yml'_ as needed.
