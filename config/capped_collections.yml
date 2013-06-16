@@ -1,0 +1,11 @@
+default: &default
+  tweets: 100_000  # 100_000 documents
+
+development:
+  <<: *default
+
+test:
+  tweets: 100
+
+production:
+  <<: *default

@@ -22,5 +22,4 @@ describe 'Geo location input' do
     obj.valid?.should be_false
   end
 
-
 end

@@ -9,8 +9,8 @@ class GeoLocationsController < ApplicationController
   end
 
   def create
-    Rails.logger.info "#{params.inspect}"
-    @geo_location = GeoLocation.new(params[:geo_location][:longitude], params[:geo_location][:latitude])
+    @geo_location = GeoLocation.new(params[:geo_location][:longitude].strip, 
+                                    params[:geo_location][:latitude].strip)
     if @geo_location.valid?
       query @geo_location.longitude.to_f, @geo_location.latitude.to_f
       render :action => "index"
@@ -34,9 +34,6 @@ class GeoLocationsController < ApplicationController
     end
     
     @tweets = @tweets.first(limit)
-    @tweets.each do |tw|
-      Rails.logger.info "TW #{tw.inspect}"
-    end
   end
   
   

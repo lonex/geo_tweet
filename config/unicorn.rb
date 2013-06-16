@@ -18,16 +18,7 @@ timeout 30
 pid "#{rails_root}/tmp/pids/unicorn.pid"
 
 before_fork do |server, worker|
-# This option works in together with preload_app true setting
-# What it does is prevent the master process from holding
-# the database connection
-  defined?(ActiveRecord::Base) and
-    ActiveRecord::Base.connection.disconnect!
 end
 
 after_fork do |server, worker|
-# Here we are establishing the connection after forking worker
-# processes
-  defined?(ActiveRecord::Base) and
-    ActiveRecord::Base.establish_connection
 end

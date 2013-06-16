@@ -41,8 +41,4 @@ RSpec.configure do |config|
     Rake::Task['db:mongoid:create_indexes'].invoke
   end
 
-  # config.before(:each) do
-  #   DatabaseCleaner.start
-  # end
-  # 
 end
