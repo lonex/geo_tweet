@@ -27,13 +27,11 @@ class GeoLocationsController < ApplicationController
     limit = QUERY_PARAMS[:limit]
     (@tweets = []).tap do
       QUERY_PARAMS[:radius].each do |radius|
-        @tweets += find_tweets(longitude, latitude, radius)
+        @tweets = find_tweets(longitude, latitude, radius)
         Rails.logger.info "FOUND #{@tweets.size} tweets..."
         break if @tweets.size >= limit
       end
     end
-    
-    @tweets = @tweets.first(limit)
   end
   
   
@@ -46,7 +44,7 @@ class GeoLocationsController < ApplicationController
                     {
                       NEAR => [longitude, latitude], MAX_DISTANCE => distance_in_geo_degree(distance_in_km) 
                     }
-                  )
+                  )[0...QUERY_PARAMS[:limit]]
   end
   
 end
