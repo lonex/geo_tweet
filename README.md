@@ -1,6 +1,6 @@
 ## Geo Tweet
 
-A prototype app to showcase MongoDB, and Twitter streaming API.
+A prototype app to showcase EventMachine, MongoDB, and Twitter streaming API.
 
 ## Installation
 
@@ -25,12 +25,11 @@ Recommend to use _zeus_ to run Rails related command line.
 
 ## Search tweets
 
-After you run the _'twitter:stream'_ rake task for a while, your local tweets data will be ready. Now you can start to do  
-tweets search based on the geo coordinates you input. Start the Rails server, and then try the following url
+After you run the _'twitter:stream'_ rake task for a while, your local tweets data will be ready. Now you can start to do search based on the geo coordinates you input. Start the Rails server, and then try the following url
 
     http://RAILS_SERVER/
 	
-Upon successful search, the page will return a list of tweets that are nearby the geo location of your input.
+Upon successful search, the page will return a list of tweets that are nearby the geo location of your input. The tweets are ordered in the order of how close they are to your search coordinates: starting from 1km radius to 2km, 5km, and then 10km in that order. The search won't return result out of the 10km radius. The radius tier can be configured in _search\_criteria.yml_. Within each radius, the result is ordered reverse chronologically.
 
 
 ## Uninstall
@@ -39,23 +38,40 @@ If you want to uninstall database
    
 	bundle exec rake db:mongo:drop
 
+## Test
+
+Due to the reason that Mongoid doesn't support capped collection creation anymore, make sure you run the rake task to create the schema before test
+
+    RAILS_ENV=test bundle exec rake db:mongo:drop db:mongo:init
+
+
 ## Discussion
 
-The app uses _tweetstream_ gem, which is an EM implementation. The app is _only_ tested with Ruby 1.9.3, MongoDB 2.4.4. 
+#### Environment
 
-The streaming API states that ['each account may create only one standing connection to the public endpoints'](https://dev.twitter.com/docs/streaming-apis/streams/public#Connections). So there is only one TweetStream client connected to the API. So the next question to consider is that how fast the consumer (to insert data into MongoDB) can be so that the insertion is fast enough to match the data inflow speed. One thing should be considered is that the main _tweetstream_ tweet processing block (callback) cannot be slow to slowdown the whole EM loop. 
+The app uses _TweetStream_ gem, which is an EM implementation. The app is _only_ tested with Ruby 1.9.3, MongoDB 2.4.4. 
 
-In the _'twitter:stream'_ rake task, Ruby fiber is used to insert the tweet into the database. In the _'twitter:stream2'_ rake task, there's no Ruby fiber involded. The insertion of the tweet is merely part of the EM's callback. The second rake task is merely for the comparison of the speed. The performance of both are very close, with 1000 tweets per 24 seconds on an old Core 2 Duo 1.6GHz 2GB mem laptop. 
+#### Implementation approaches
 
-Fiber can be created inside the main _tweetstream_ callback (block). But it only imposes overhead by adding more execution time of initializing the Fiber each time in the callback. 
+The idea is to get tweets fast and miss less tweets from the Twitter streaming data. The Twitter streaming server is the data producer, our client is the data consumer. 
 
-There's another approach to the problem -- to abandon the _tweetstream_ gem and use the _'em-http-request'_ directly. This gives you more control over the EM loop and the Fiber construct. But then you will face the same trick [like this](https://github.com/igrigorik/em-http-request/blob/master/examples/fibered-http.rb). The Fiber consumes the data (by persisting them into MongoDB) handed over by the async EM::HttpRequest callback. The http call and callback is handled by the main EM event loop, but the execution flow of the Fiber is still part of the EM callback, which is essentially the same approach as that of the _'twitter:stream'_ rake task. It could also run into problem because Twitter doesn't want to the client make connection to its streaming API endpoint too often.
+The streaming API states that ['each account may create only one standing connection to the public endpoints'](https://dev.twitter.com/docs/streaming-apis/streams/public#Connections). The client doesn't have much choice but sticks to the per connection status inflow. The physical network may increase the amount of data coming in. But how fast the client gets the data is mostly capped by the server.
 
-The tweets search uses kilometer as distance unit. It searches a radius of 1km, 2km, 5km, 10km, in that order, if necessary. Any tweets geo-tagged beyond 10km is not included. The results is ordered reverse chronologically. The search radius is configurable, modify the _'config/search_criteria.yml'_ as needed.
+Now the question becomes that whether or not the consumer/client can be fast enough consumes the data sent by the server. Chasing the call sequence, you can find out that the _TweetStream_ client uses the client provided by the _em-twitter_, in which case it's a EM::Connection client connects to the server. The client is managed by EM and runs in the main EM event loop. Whenever the system tells it that there's data arriving on the port, it polls the system I/O buffer by invoking the _receive\_data_ callback. It then  buffers the data internally. Each chunk of the incoming data may not be complete, but the client decodes them into usable packets. The _TweetStream_ client then gets the data by calling the _EM::Twitter::Client#each_ iterator. This eventaully invokes the _status_ handling callback we defined when we initialized the client as a block. 
+
+So the _status_ handling callback is executed inside the main EM event loop. It could block the event loop if it's too expensive. In the _'twitter_streaming\.rake'_ file, we include 3 different approaches to this. Case 1 (twitter:stream task) uses fiber, Case 2 (twitter:stream2 task) is the simplest by doing database insertion inside the callback. Case 3 (twitter:stream3 task) uses EM.defer to put the database insertion in the background as an asynchronous task. Case 3 is my personally favorite b/c it increases the capability of the data consumer. When you run the twitter:stream3 rake task, literally you can find that there are 20 connections made to the MongoDB, this indirectly proves the thread-pool size of EM.defer is 20. The intersting part is that the test result shows each of these 3 approaches persists the tweet at a speed of roughly 1000 _status_ per 23 or 24 seconds. 
+
+Ruby Fiber can be created every time the main _TweetStream_ client callback block is invoked. But it imposes overhead of Fiber creation even though it's light weighted.
+
+There's other approach to solve the same problem -- to abandon the _TweetStream_ gem (and thus EM::Connection#receive_data) and use the *em\-http\-request* directly. This gives you more control over the EM event loop. But then you face the same trick [like this](https://github.com/igrigorik/em-http-request/blob/master/examples/fibered-http.rb). But it could also run into problem by making connection to Twitter too often.
+
+### The data
 
 The geo data uses Mongo _'2d'_ geo-spacial index, not the latest _'2dsphere'_ index.
 
 Given the Twitter streaming API never sends the same status a second time, there is no unique index on the tweet/status id enforced in the database.
+
+Through testing, the geo coordinates [0, 0] seems to data error from Twitter. It should be handled more appropriate.
 
 
 ## Reference

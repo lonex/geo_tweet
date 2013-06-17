@@ -5,7 +5,7 @@ development:
   <<: *default
 
 test:
-  tweets: 100
+  tweets: 10
 
 production:
   <<: *default

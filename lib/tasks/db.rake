@@ -20,6 +20,7 @@ namespace :db do
       max = CAPPED_COLLECTIONS[:tweets]
       # Assume each tweet size is 1024 bytes
       size = max * 1024
+      
       # Mongoid 3.x dropped store_in for capped collection. We do it here.
       # https://github.com/mongoid/mongoid/issues/2917
       mongo 'db.createCollection("tweets", {capped:true, size: %s, max: %s})' % [size, max]
